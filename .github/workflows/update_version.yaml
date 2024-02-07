@@ -91,5 +91,4 @@ jobs:
           title: "[${{ matrix.version }}] Update CoreDNS version"
           body: Update CoreDNS version to ${{ matrix.version }}
           branch: v${{ matrix.version }}
-          delete-branch: true
           base: main
