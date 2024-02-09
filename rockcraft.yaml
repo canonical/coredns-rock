@@ -16,7 +16,8 @@ services:
     override: replace
     summary: "coredns service"
     startup: enabled
-    command: "/coredns"
+    command: "/coredns [ -conf /etc/coredns/Corefile ]"
+    on-failure: shutdown
 
 parts:
   coredns:
