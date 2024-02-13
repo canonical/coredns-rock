@@ -17,7 +17,7 @@ jobs:
       platform-labels: '{"amd64": ["self-hosted", "linux", "X64"], "arm64": ["Ubuntu_ARM64_4C_16G_01"]}'
   build-and-push-multiarch-manifest:
     name: Combine Rocks and Push Multiarch Manifest
-    uses: canonical/k8s-workflows/.github/workflows/assemble_multiarch_image.yaml@main
+    uses: canonical/k8s-workflows/.github/workflows/assemble_multiarch_image.yaml@KU-158/arm-builder
     needs: [build-and-push-arch-specifics]
     with:
       rock-metas: ${{ needs.build-and-push-arch-specifics.outputs.rock-metas }}
