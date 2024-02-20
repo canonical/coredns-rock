@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-push-arch-specifics:
     name: Build Rocks and Push Arch Specific Images
-    uses: canonical/k8s-workflows/.github/workflows/build_rocks.yaml@KU-158/arm-builder
+    uses: canonical/k8s-workflows/.github/workflows/build_rocks.yaml@main
     with:
       owner: ${{ github.repository_owner }}
       trivy-image-config: "trivy.yaml"
@@ -16,7 +16,7 @@ jobs:
       cache-action: ${{ (github.event_name == 'push') && 'save' || 'restore' }}
       platform-labels: '{"arm64": ["Ubuntu_ARM64_4C_16G_01"]}'
   scan-images:
-    uses: canonical/k8s-workflows/.github/workflows/scan_images.yaml@KU-158/arm-builder
+    uses: canonical/k8s-workflows/.github/workflows/scan_images.yaml@main
     needs: [build-and-push-arch-specifics]
     secrets: inherit
     with:
@@ -25,7 +25,7 @@ jobs:
       trivy-image-config: ./trivy.yaml
   build-and-push-multiarch-manifest:
     name: Combine Rocks and Push Multiarch Manifest
-    uses: canonical/k8s-workflows/.github/workflows/assemble_multiarch_image.yaml@KU-158/arm-builder
+    uses: canonical/k8s-workflows/.github/workflows/assemble_multiarch_image.yaml@main
     needs: [build-and-push-arch-specifics]
     with:
       rock-metas: ${{ needs.build-and-push-arch-specifics.outputs.rock-metas }}
