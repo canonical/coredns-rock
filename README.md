@@ -1,2 +1,2 @@
 # coredns-rock
-A ROCK for CoreDNS.
+A rock for CoreDNS.
