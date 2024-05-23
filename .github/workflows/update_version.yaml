@@ -74,12 +74,12 @@ jobs:
         with:
           ref: main
 
-      - name: Update ROCK's source tag
+      - name: Update rock's source tag
         uses: mikefarah/yq@master
         with:
           cmd: yq -i '.parts.coredns.source-tag = "v${{ matrix.version }}"' 'rockcraft.yaml'
 
-      - name: Update ROCK's version
+      - name: Update rock's version
         uses: mikefarah/yq@master
         with:
           cmd: yq -i '.version = "${{ matrix.version }}"' 'rockcraft.yaml'

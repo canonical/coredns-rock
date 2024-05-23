@@ -1,6 +1,6 @@
 name: coredns
-summary: ROCK for the CoreDNS Project.
-description: This ROCK is a drop in replacement for the coredns/coredns image.
+summary: Rock for the CoreDNS Project.
+description: This rock is a drop in replacement for the coredns/coredns image.
 version: "1.11.1"
 license: Apache-2.0
 
