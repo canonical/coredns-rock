@@ -15,7 +15,7 @@ jobs:
       multiarch-awareness: true
       cache-action: ${{ (github.event_name == 'push') && 'save' || 'restore' }}
       # pinning to use rockcraft 1.3.0 feature `entrypoint-service`
-      rockcraft-revisions: '{"amd64": "2218", "arm64": "1784"}'
+      rockcraft-revisions: '{"amd64": "2218", "arm64": "2222"}'
       arch-skipping-maximize-build-space: '["arm64"]'
       platform-labels: '{"arm64": ["Ubuntu_ARM64_4C_16G_01"]}'
   scan-images:
@@ -34,4 +34,3 @@ jobs:
     with:
       rock-metas: ${{ needs.build-and-push-arch-specifics.outputs.changed-rock-metas }}
       dry-run: ${{ github.event_name != 'push' }}
-#test3
