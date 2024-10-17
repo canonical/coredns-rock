@@ -1,15 +1,13 @@
 name: coredns
 summary: ROCK for the CoreDNS Project.
 description: This ROCK is a drop in replacement for the coredns/coredns image.
-version: "1.11.1"
+version: "1.11.3"
 license: Apache-2.0
-
 base: bare
 build-base: ubuntu@22.04
 platforms:
   amd64:
   arm64:
-
 entrypoint-service: coredns
 services:
   coredns:
@@ -18,13 +16,12 @@ services:
     startup: enabled
     command: "/coredns [ -conf /etc/coredns/Corefile ]"
     on-failure: shutdown
-
 parts:
   coredns:
     plugin: nil
     source: https://github.com/coredns/coredns
     source-type: git
-    source-tag: v1.11.1
+    source-tag: v1.11.3
     source-depth: 1
     build-packages:
       - build-essential
