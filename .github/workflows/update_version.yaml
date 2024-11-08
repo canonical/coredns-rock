@@ -85,7 +85,7 @@ jobs:
           cmd: yq -i '.version = "${{ matrix.version }}"' 'rockcraft.yaml'
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: Update CoreDNS version to ${{ matrix.version }}
           title: "[${{ matrix.version }}] Update CoreDNS version"
