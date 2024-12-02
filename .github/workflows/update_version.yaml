@@ -11,17 +11,8 @@ on:
 jobs:
   generator:
     name: Generate Step for new CoreDNS versions
-    runs-on: ubuntu-latest
-    outputs:
-      tags: ${{ steps.fetch-upstream.outputs.tags }}
+    runs-on: ubuntu-24.04
     steps:
-      - name: Prepare environment
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          sudo apt-get -qq update
-          sudo apt-get -qq install -y jq
-          sudo snap install yq
-
       - name: Checkout rock repository
         uses: actions/checkout@v4
         with:
@@ -36,49 +27,21 @@ jobs:
           fetch-tags: true
           fetch-depth: 0
 
-      - name: Itemize all releases
-        id: releases
+      - name: Craft using Make target
+        id: emit-rockcraft
         run: |
-          rm -rf versions.txt
-          for rockcraft in $(find coredns-rock -name 'rockcraft.yaml'); do
-            echo $(yq '.version' $rockcraft) >> versions.txt
-          done
-          
-      - name: Craft from Upstream tags
-        id: fetch-upstream
-        run: |
-          current_releases=( $(sort -V versions.txt) )
-          min_tag="v${current_releases[0]}"
-          coredns_tags=( $(git -C coredns tag --sort=v:refname | sed -n '/'${min_tag}'/,$p') )
-          new_tags=()
-
-          for coredns_tag in "${coredns_tags[@]}"
-          do
-             if [[ ! -e coredns-rock/${coredns_tag:1}/rockcraft.yaml ]]; then
-               new_tag=${coredns_tag:1}
-               new_tags+=($new_tag)
-               mkdir -p coredns-rock/${new_tag}
-               tag=${new_tag} envsubst < coredns-rock/template/rockcraft.yaml.in > coredns-rock/${new_tag}/rockcraft.yaml
-             fi
-          done
-
-          if [ ${#new_tags[@]} -eq 0 ]; then
-              tags='[]'
-          else
-              tags=$(printf '%s\n' "${new_tags[@]}" | jq -R . | jq --compact-output -s .)
-          fi
-
-          echo $tags
-          echo "tags=$tags" >> $GITHUB_OUTPUT
+          pushd coredns-rock
+          make COREDNS_GIT_DIR=../coredns update-component
+          popd
 
       - name: Commit and push new rockcraft.yaml
         id: commit-rockcraft
-        if: ${{ steps.fetch-upstream.outputs.tags != '[]' }}
+        if: ${{ steps.emit-rockcraft.outputs.tags != '[]' }}
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: Update CoreDNS versions with ${{ join(fromJSON(steps.fetch-upstream.outputs.tags), ', ') }}
+          commit-message: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
           title: "Update CoreDNS versions"
-          body: Update CoreDNS versions with ${{ join(fromJSON(steps.fetch-upstream.outputs.tags), ', ') }}
+          body: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
           path: coredns-rock
           branch: autoupdate/sync/coredns
           delete-branch: true
