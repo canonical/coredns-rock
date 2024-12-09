@@ -8,8 +8,14 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   generator:
+    permissions:
+      contents: write # for peter-evans/create-pull-request to create branch
+      pull-requests: write # for peter-evans/create-pull-request to create a PR
     name: Generate Step for new CoreDNS versions
     runs-on: ubuntu-24.04
     steps:
@@ -18,6 +24,7 @@ jobs:
         with:
           path: coredns-rock
           ref: ${{ github.head_ref || 'main' }}
+          ssh-key: ${{ secrets.BOT_SSH_KEY }}
 
       - name: Checkout coredns repository
         uses: actions/checkout@v4
@@ -44,5 +51,7 @@ jobs:
           body: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
           path: coredns-rock
           branch: autoupdate/sync/coredns
+          labels: |
+            automerge
           delete-branch: true
           base: main
