@@ -7,11 +7,11 @@ RO_SCRIPT_DIR="$( dirname "${BASH_SOURCE[0]}")"
 RO_REPO_DIR=$(dirname ${RO_SCRIPT_DIR})
 RO_VERSIONS=${RO_SCRIPT_DIR}/../versions.txt
 
-function usage() {
+function check_environment() {
     if [[ -z ${COREDNS_GIT_DIR+x} ]]; then
-        echo "COREDNS_GIT_DIR is not set" > /dev/stderr
-        echo "   Clone with 'git clone --bare --filter=blob:none --no-checkout https://github.com/coredns/coredns.git /tmp/coredns.git'" > /dev/stderr
-        echo "   Re-run with 'COREDNS_GIT_DIR=/tmp/coredns.git $0'" > /dev/stderr
+        echo "COREDNS_GIT_DIR is not set" >&2
+        echo "   Clone with 'git clone --bare --filter=blob:none --no-checkout https://github.com/coredns/coredns.git /tmp/coredns.git'" >&2
+        echo "   Re-run with 'COREDNS_GIT_DIR=/tmp/coredns.git $0'" >&2
         exit 1
     fi
 }
@@ -20,7 +20,7 @@ function usage() {
 function check_dependencies(){
     for cmd in yq jq git envsubst; do
         if ! command -v $cmd &> /dev/null; then
-            echo "$cmd could not be found" > /dev/stderr
+            echo "$cmd could not be found" >&2
             exit 1
         fi
     done
@@ -35,6 +35,7 @@ function create_rockcrafts(){
 
     rm -rf ${RO_VERSIONS}
     for rockcraft in $(find ${RO_REPO_DIR} -name 'rockcraft.yaml'); do
+        # output is piped through echo to work through yq confinement
         echo $(yq '.version' $rockcraft) >> ${RO_VERSIONS}
     done
     current_releases=( $(sort -V ${RO_VERSIONS}) )
@@ -74,7 +75,7 @@ function create_rockcrafts(){
 
 
 function main() {
-    usage
+    check_environment
     check_dependencies
     create_rockcrafts
 }
