@@ -54,4 +54,5 @@ jobs:
           labels: |
             automerge
           delete-branch: true
+          token: ${{ secrets.BOT_TOKEN }}
           base: main
