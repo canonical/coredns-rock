@@ -29,7 +29,7 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.23/stable
+      - go/1.21/stable
     stage-packages:
       - ca-certificates_data
     override-build: |
