@@ -35,28 +35,5 @@ parts:
     stage-packages:
       - ca-certificates_data
     override-build: |
-      set -euo pipefail
-
-      GITCOMMIT="${GITCOMMIT:-$(git describe --dirty --always)}"
-      BINARY="${BINARY:-coredns}"
-      SYSTEM="${SYSTEM:-}"
-      BUILDOPTS="${BUILDOPTS:--v}"
-      GOPATH="${GOPATH:-$HOME/go}"
-      CGO_ENABLED="${CGO_ENABLED:-0}"
-
-      export GOSUMDB=sum.golang.org
-      export CGO_ENABLED=1
-      export GOTOOLCHAIN="local"
-      export GOEXPERIMENT="opensslcrypto"
-
-      if [[ ! -f core/plugin/zplugin.go || ! -f core/dnsserver/zdirectives.go ]]; then
-        echo "Generating go files..."
-        go generate coredns.go
-        go get
-      fi
-
-      echo "Building $BINARY with GitCommit $GITCOMMIT"
-      CGO_ENABLED="$CGO_ENABLED" $SYSTEM go build $BUILDOPTS \
-        -ldflags="-s -w -X github.com/coredns/coredns/coremain.GitCommit=${GITCOMMIT}" \
-        -o "$BINARY"
+      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME
