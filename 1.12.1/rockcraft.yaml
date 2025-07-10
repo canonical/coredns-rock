@@ -29,7 +29,7 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.21-fips/stable
+      - go/1.23-fips/stable
     stage:
       - -bin
     stage-packages:
