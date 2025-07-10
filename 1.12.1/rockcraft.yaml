@@ -29,9 +29,34 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.21/stable
+      - go/1.21-fips/stable
+    stage:
+      - -bin
     stage-packages:
       - ca-certificates_data
     override-build: |
-      make
+      set -euo pipefail
+
+      GITCOMMIT="${GITCOMMIT:-$(git describe --dirty --always)}"
+      BINARY="${BINARY:-coredns}"
+      SYSTEM="${SYSTEM:-}"
+      BUILDOPTS="${BUILDOPTS:--v}"
+      GOPATH="${GOPATH:-$HOME/go}"
+      CGO_ENABLED="${CGO_ENABLED:-0}"
+
+      export GOSUMDB=sum.golang.org
+      export CGO_ENABLED=1
+      export GOTOOLCHAIN="local"
+      export GOEXPERIMENT="opensslcrypto"
+
+      if [[ ! -f core/plugin/zplugin.go || ! -f core/dnsserver/zdirectives.go ]]; then
+        echo "Generating go files..."
+        go generate coredns.go
+        go get
+      fi
+
+      echo "Building $BINARY with GitCommit $GITCOMMIT"
+      CGO_ENABLED="$CGO_ENABLED" $SYSTEM go build $BUILDOPTS \
+        -ldflags="-s -w -X github.com/coredns/coredns/coremain.GitCommit=${GITCOMMIT}" \
+        -o "$BINARY"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME
