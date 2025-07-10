@@ -15,7 +15,7 @@ jobs:
       multiarch-awareness: true
       cache-action: ${{ (github.event_name == 'push') && 'save' || 'restore' }}
       arch-skipping-maximize-build-space: '["arm64"]'
-      platform-labels: '{"arm64": ["Ubuntu_ARM64_4C_16G_01"]}'
+      platform-labels: '{"arm64": ["self-hosted", "Linux", "ARM64", "jammy"]}'
       enabled-ubuntu-pro-features: "fips-updates"
       multipass-image: "22.04"
     secrets:
