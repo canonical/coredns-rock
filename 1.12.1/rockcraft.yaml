@@ -30,6 +30,8 @@ parts:
       - build-essential
     build-snaps:
       - go/1.23-fips/stable
+    stage-snaps:
+      - core22/fips-updates/stable
     stage:
       - -bin
     stage-packages:
