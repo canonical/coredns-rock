@@ -38,4 +38,3 @@ parts:
       - ca-certificates_data
     override-build: |
       CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
-      cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME
