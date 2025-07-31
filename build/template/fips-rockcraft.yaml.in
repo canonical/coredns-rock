@@ -1,7 +1,7 @@
 name: coredns
-summary: ROCK for the CoreDNS Project.
+summary: FIPS ROCK for the CoreDNS Project.
 description: This ROCK is a drop in replacement for the coredns/coredns image.
-version: "1.12.1"
+version: "${tag}"
 license: Apache-2.0
 
 base: bare
@@ -24,7 +24,7 @@ parts:
     plugin: nil
     source: https://github.com/coredns/coredns
     source-type: git
-    source-tag: v1.12.1
+    source-tag: v${tag}
     source-depth: 1
     build-packages:
       - build-essential
@@ -38,4 +38,5 @@ parts:
       - ca-certificates_data
     override-build: |
       CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
-      cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
+      cp $${ignored_template_var}CRAFT_PART_BUILD/coredns $${ignored_template_var}CRAFT_PART_INSTALL
+

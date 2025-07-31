@@ -6,6 +6,7 @@ set -eu
 RO_SCRIPT_DIR="$( dirname "${BASH_SOURCE[0]}")"
 RO_REPO_DIR=$(dirname ${RO_SCRIPT_DIR})
 RO_VERSIONS=${RO_SCRIPT_DIR}/../versions.txt
+FIPS_ENABLED=${FIPS_ENABLED:-true}
 
 function check_environment() {
     if [[ -z ${COREDNS_GIT_DIR+x} ]]; then
@@ -46,6 +47,12 @@ function create_rockcrafts(){
     coredns_tags=( $(git -C ${COREDNS_GIT_DIR} tag --sort=v:refname | sed -n '/'${min_tag}'/,$p') )
     new_tags=()
 
+    # Get the right rockcraft.yaml template based on FIPS_ENABLED
+    TEMPLATE=rockcraft.yaml.in
+    if [[ ${FIPS_ENABLED} == true ]]; then
+        TEMPLATE=fips-rockcraft.yaml.in
+    fi
+
     for coredns_tag in "${coredns_tags[@]}"; do
         if [[ ! -e ${RO_REPO_DIR}/${coredns_tag:1}/rockcraft.yaml ]]; then
             new_tag=${coredns_tag:1}
@@ -53,7 +60,7 @@ function create_rockcrafts(){
             echo "Creating rockcraft.yaml for ${new_tag}"
             mkdir -p ${RO_REPO_DIR}/${new_tag}
             unset ignored_template_var
-            tag=${new_tag} envsubst < ${RO_SCRIPT_DIR}/template/rockcraft.yaml.in > ${RO_REPO_DIR}/${new_tag}/rockcraft.yaml
+            tag=${new_tag} envsubst < ${RO_SCRIPT_DIR}/template/${TEMPLATE} > ${RO_REPO_DIR}/${new_tag}/rockcraft.yaml
         else
             echo "Skipping ${coredns_tag} as it already exists"
         fi
