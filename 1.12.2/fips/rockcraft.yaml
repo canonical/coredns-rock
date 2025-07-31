@@ -1,0 +1,42 @@
+name: coredns
+summary: FIPS ROCK for the CoreDNS Project.
+description: This ROCK is a drop in replacement for the coredns/coredns image.
+version: "1.12.2"
+license: Apache-2.0
+
+base: bare
+build-base: ubuntu@22.04
+platforms:
+  amd64:
+  arm64:
+
+entrypoint-service: coredns
+services:
+  coredns:
+    override: replace
+    summary: "coredns service"
+    startup: enabled
+    command: "/coredns [ -conf /etc/coredns/Corefile ]"
+    on-failure: shutdown
+
+parts:
+  coredns:
+    plugin: nil
+    source: https://github.com/coredns/coredns
+    source-type: git
+    source-tag: v1.12.2
+    source-depth: 1
+    build-packages:
+      - build-essential
+    build-snaps:
+      - go/1.23-fips/stable
+    stage-snaps:
+      - core22/fips-updates/stable
+    stage:
+      - -bin
+    stage-packages:
+      - ca-certificates_data
+    override-build: |
+      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
+      cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
+
