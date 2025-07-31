@@ -40,7 +40,7 @@ clone-CoreDNS:
 .PHONY: update-component
 update-component: install-tools clone-CoreDNS
 	@echo "Updating component..."
-	@COREDNS_GIT_DIR=$(COREDNS_GIT_DIR) FIPS_ENABLED=$(FIPS_ENABLED) build/craft_release.sh
+	@COREDNS_GIT_DIR=$(COREDNS_GIT_DIR) build/craft_release.sh
 
 # Target to remove the temporary directory
 clean:

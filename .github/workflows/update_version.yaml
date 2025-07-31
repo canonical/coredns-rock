@@ -2,11 +2,6 @@ name: Create PRs for new CoreDNS versions
 
 on:
   workflow_dispatch:
-    inputs:
-      fips_enabled:
-        description: Create the template with FIPS 
-        required: false
-        default: 'true'
   schedule:
     - cron: "0 10 * * *"
   pull_request:
@@ -43,7 +38,7 @@ jobs:
         id: emit-rockcraft
         run: |
           pushd coredns-rock
-          make COREDNS_GIT_DIR=../coredns update-component FIPS_ENABLED="${{ github.event.inputs.fips_enabled }}"
+          make COREDNS_GIT_DIR=../coredns update-component
           popd
 
       - name: Commit and push new rockcraft.yaml
