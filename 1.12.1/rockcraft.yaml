@@ -29,9 +29,13 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.21/stable
+      - go/1.23-fips/stable
+    stage-snaps:
+      - core22/fips-updates/stable
+    stage:
+      - -bin
     stage-packages:
       - ca-certificates_data
     override-build: |
-      make
-      cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME
+      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
+      cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
