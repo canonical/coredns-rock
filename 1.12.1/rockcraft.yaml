@@ -20,6 +20,11 @@ services:
     on-failure: shutdown
 
 parts:
+  openssl:
+    plugin: nil
+    stage-packages:
+      - openssl-fips-module-3 # a Pro only FIPS package for openssl
+      - openssl # now automatically selected from fips-preview
   coredns:
     plugin: nil
     source: https://github.com/coredns/coredns
@@ -30,10 +35,6 @@ parts:
       - build-essential
     build-snaps:
       - go/1.23-fips/stable
-    stage-snaps:
-      - core22/fips-updates/stable
-    stage:
-      - -bin
     stage-packages:
       - ca-certificates_data
     override-build: |
