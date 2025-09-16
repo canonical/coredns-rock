@@ -46,6 +46,7 @@ jobs:
         if: ${{ steps.emit-rockcraft.outputs.tags != '[]' }}
         uses: peter-evans/create-pull-request@v7
         with:
+          author: Canonical Github Bot <actions@canonical.com>
           commit-message: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
           title: "Update CoreDNS versions"
           body: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
