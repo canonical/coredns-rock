@@ -38,5 +38,11 @@ parts:
     stage-packages:
       - ca-certificates_data
     override-build: |
-      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
+      which go
+      snap list
+      snap refresh go --channel 1.24-fips/stable
+      snap list
+      go env
+      go version
+      make CGO_ENABLED=1 GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
