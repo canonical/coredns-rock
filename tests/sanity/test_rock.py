@@ -10,7 +10,7 @@ from k8s_test_harness.util import docker_util, env_util
 
 TEST_PATH = Path(__file__)
 REPO_PATH = TEST_PATH.parent.parent.parent
-IMAGE_BASE = "ghcr.io/canonical/metrics-server:"
+IMAGE_BASE = "ghcr.io/canonical/coredns:"
 
 
 def is_fips_rock(image_version):
@@ -26,7 +26,7 @@ def _image_versions():
 def resolve_image(image_version):
     try:
         rock = env_util.get_build_meta_info_for_rock_version(
-            "metrics-server", image_version, "amd64"
+            "coredns", image_version, "amd64"
         )
         return rock.image
     except OSError:
@@ -46,10 +46,10 @@ def _run_entrypoint_and_assert(image, entrypoint, expect_stdout_contains=None):
 
 
 @pytest.mark.parametrize("image_version", _image_versions())
-def test_metrics_server_executable(image_version):
+def test_coredns_executable(image_version):
     image = resolve_image(image_version)
     _run_entrypoint_and_assert(
-        image, "/metrics-server --version", expect_stdout_contains=image_version
+        image, "/coredns --version", expect_stdout_contains=image_version
     )
 
 
