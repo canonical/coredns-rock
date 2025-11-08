@@ -14,7 +14,7 @@ IMAGE_BASE = f"ghcr.io/canonical/{IMAGE_NAME}"
 IMAGE_ENTRYPOINT = "/coredns --version"
 
 
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
 def test_executable(image_version):
     image = env_util.resolve_image(IMAGE_NAME, image_version)
     docker_util.run_entrypoint_and_assert(
@@ -22,7 +22,7 @@ def test_executable(image_version):
     )
 
 
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
 def test_pebble_executable(image_version):
     image = env_util.resolve_image(IMAGE_NAME, image_version)
     docker_util.run_entrypoint_and_assert(
@@ -31,7 +31,7 @@ def test_pebble_executable(image_version):
 
 
 @pytest.mark.parametrize("GOFIPS", [0, 1], ids=lambda v: f"GOFIPS={v}")
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
 def test_fips(image_version, GOFIPS):
     image = env_util.resolve_image(IMAGE_NAME, image_version)
     entrypoint = shlex.split(IMAGE_ENTRYPOINT)
