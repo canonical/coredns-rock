@@ -14,26 +14,32 @@ IMAGE_BASE = f"ghcr.io/canonical/{IMAGE_NAME}"
 IMAGE_ENTRYPOINT = "/coredns --version"
 
 
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
 def test_executable(image_version):
-    image = env_util.resolve_image(IMAGE_NAME, image_version)
+    image = env_util.get_build_meta_info_for_rock_version(
+        IMAGE_NAME, image_version, "amd64"
+    ).image
     docker_util.run_entrypoint_and_assert(
         image, IMAGE_ENTRYPOINT, expect_stdout_contains=image_version
     )
 
 
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
 def test_pebble_executable(image_version):
-    image = env_util.resolve_image(IMAGE_NAME, image_version)
+    image = env_util.get_build_meta_info_for_rock_version(
+        IMAGE_NAME, image_version, "amd64"
+    ).image
     docker_util.run_entrypoint_and_assert(
         image, "/bin/pebble version", expect_stdout_contains="v1.18.0"
     )
 
 
 @pytest.mark.parametrize("GOFIPS", [0, 1], ids=lambda v: f"GOFIPS={v}")
-@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(IMAGE_NAME, REPO_PATH))
+@pytest.mark.parametrize("image_version", env_util.image_versions_in_repo(REPO_PATH))
 def test_fips(image_version, GOFIPS):
-    image = env_util.resolve_image(IMAGE_NAME, image_version)
+    image = env_util.get_build_meta_info_for_rock_version(
+        IMAGE_NAME, image_version, "amd64"
+    ).image
     entrypoint = shlex.split(IMAGE_ENTRYPOINT)
 
     docker_env = ["-e", f"GOFIPS={GOFIPS}"]
