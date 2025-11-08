@@ -26,7 +26,7 @@ def test_executable(image_version):
 def test_pebble_executable(image_version):
     image = env_util.resolve_image(IMAGE_NAME, image_version)
     docker_util.run_entrypoint_and_assert(
-        image, "/bin/pebble version", expect_stdout_contains="v1.14.0"
+        image, "/bin/pebble version", expect_stdout_contains="v1.18.0"
     )
 
 
