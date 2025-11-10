@@ -38,5 +38,5 @@ parts:
     stage-packages:
       - ca-certificates_data
     override-build: |
-      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
+      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
       cp $${ignored_template_var}CRAFT_PART_BUILD/coredns $${ignored_template_var}CRAFT_PART_INSTALL
