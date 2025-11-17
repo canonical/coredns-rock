@@ -34,12 +34,10 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.24-fips/stable
+      - go/1.23-fips/stable
     stage-packages:
       - ca-certificates_data
     override-build: |
-      # NOTE: (mateoflorido) Something is changing the requested version
-      # in the build-snaps section.
-      snap refresh go --channel 1.24-fips/stable
-      make CGO_ENABLED=1 GOTOOLCHAIN=local SYSTEM="GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
+      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
+
