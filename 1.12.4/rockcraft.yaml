@@ -37,9 +37,13 @@ parts:
       - go/1.24-fips/stable
     stage-packages:
       - ca-certificates_data
+    build-environment:
+      - GOPROXY: https://proxy.golang.org,direct
+      - GODEBUG: http2client=0
     override-build: |
       # NOTE: (mateoflorido) Something is changing the requested version
       # in the build-snaps section.
       snap refresh go --channel 1.24-fips/stable
       make CGO_ENABLED=1 GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
+# Trigger build

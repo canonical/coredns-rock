@@ -32,6 +32,10 @@ parts:
       - go/1.21/stable
     stage-packages:
       - ca-certificates_data
+    build-environment:
+      - GOPROXY: https://proxy.golang.org,direct
+      - GODEBUG: http2client=0
     override-build: |
       make
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME
+# Trigger build
