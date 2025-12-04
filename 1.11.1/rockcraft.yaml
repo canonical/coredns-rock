@@ -32,10 +32,7 @@ parts:
       - go/1.21/stable
     stage-packages:
       - ca-certificates_data
-    # Use direct Go module downloads to avoid transient EOF errors
-    # from proxy.golang.org on self-hosted runners
     build-environment:
-      - GOPROXY: direct
     override-build: |
       make
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME

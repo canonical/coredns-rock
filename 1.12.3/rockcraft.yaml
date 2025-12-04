@@ -37,10 +37,7 @@ parts:
       - go/1.23-fips/stable
     stage-packages:
       - ca-certificates_data
-    # Use direct Go module downloads to avoid transient EOF errors
-    # from proxy.golang.org on self-hosted runners
     build-environment:
-      - GOPROXY: direct
     override-build: |
       CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
