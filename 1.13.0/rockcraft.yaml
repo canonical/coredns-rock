@@ -1,6 +1,6 @@
 name: coredns
 summary: ROCK for the CoreDNS Project.
-description: This ROCK is a drop in replacement for the coredns/coredns image.
+description: This ROCK is a drop in replacement for the coredns/coredns image. Testing Go caching.
 version: "1.13.0"
 license: Apache-2.0
 
