@@ -32,7 +32,6 @@ parts:
       - go/1.23/stable
     stage-packages:
       - ca-certificates_data
-    build-environment:
     override-build: |
       make
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PRIME

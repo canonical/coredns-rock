@@ -37,7 +37,6 @@ parts:
       - go/1.24-fips/stable
     stage-packages:
       - ca-certificates_data
-    build-environment:
     override-build: |
       # NOTE: (mateoflorido) Something is changing the requested version
       # in the build-snaps section.
