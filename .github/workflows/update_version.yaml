@@ -44,7 +44,7 @@ jobs:
       - name: Commit and push new rockcraft.yaml
         id: commit-rockcraft
         if: ${{ steps.emit-rockcraft.outputs.tags != '[]' }}
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           author: Canonical Github Bot <actions@canonical.com>
           commit-message: Update CoreDNS versions with ${{ join(fromJSON(steps.emit-rockcraft.outputs.tags), ', ') }}
