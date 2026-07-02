@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 from k8s_test_harness.util import docker_util, env_util
+from test_util import config
 
 TEST_PATH = Path(__file__)
 REPO_PATH = TEST_PATH.parent.parent.parent
@@ -28,3 +29,15 @@ def test_sanity(image_version):
 
     process = docker_util.run_in_docker(image, [entrypoint, "--version"])
     assert f"CoreDNS-{image_version}" in process.stdout
+
+
+@pytest.mark.parametrize("image_version", _image_versions())
+def test_pebble(image_version):
+    rock = env_util.get_build_meta_info_for_rock_version(
+        "coredns", image_version, "amd64"
+    )
+    docker_util.run_entrypoint_and_assert(
+        rock.image,
+        "/bin/pebble version",
+        expect_stdout_contains=config.PEBBLE_VERSION,
+    )
