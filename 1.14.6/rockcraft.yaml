@@ -26,6 +26,7 @@ parts:
       - openssl-fips-module-3 # a Pro only FIPS package for openssl
       - openssl # now automatically selected from fips-preview
   coredns:
+    after: [pebble]
     plugin: nil
     source: https://github.com/coredns/coredns
     source-type: git
@@ -37,6 +38,8 @@ parts:
       - go/1.24-fips/stable
     stage-packages:
       - ca-certificates_data
+    # Keep parity with the working 1.13.x build recipe.
     override-build: |
-      CGO_ENABLED=1 make SYSTEM="GOTOOLCHAIN=local GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
+      snap refresh go --channel=1.24-fips/stable
+      make CGO_ENABLED=1 GOTOOLCHAIN=local SYSTEM="GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
