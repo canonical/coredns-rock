@@ -39,7 +39,12 @@ parts:
     stage-packages:
       - ca-certificates_data
     # Keep parity with the working 1.13.x build recipe.
+    # NOTE: Unset LDFLAGS before make — coredns v1.14.6 changed LDFLAGS to a
+    # ?= variable, and rockcraft sets LDFLAGS=-L<staged-lib-path> which would
+    # override the Makefile default and pass -L as an invalid direct go build
+    # flag. CGO_LDFLAGS (still set by rockcraft) handles lib path for CGO.
     override-build: |
       snap refresh go --channel=1.25-fips/stable
+      unset LDFLAGS
       make CGO_ENABLED=1 GOTOOLCHAIN=local SYSTEM="GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
