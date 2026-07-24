@@ -35,11 +35,11 @@ parts:
     build-packages:
       - build-essential
     build-snaps:
-      - go/1.24-fips/stable
+      - go/1.25-fips/stable
     stage-packages:
       - ca-certificates_data
     # Keep parity with the working 1.13.x build recipe.
     override-build: |
-      snap refresh go --channel=1.24-fips/stable
+      snap refresh go --channel=1.25-fips/stable
       make CGO_ENABLED=1 GOTOOLCHAIN=local SYSTEM="GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
       cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
