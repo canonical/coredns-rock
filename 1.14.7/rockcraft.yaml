@@ -41,6 +41,7 @@ parts:
     stage-packages:
       - openssl-fips-module-3 # a Pro only FIPS package for openssl
       - openssl # now automatically selected from fips-preview
+      - ca-certificates_data
   coredns:
     after: [pebble]
     plugin: nil
@@ -52,8 +53,6 @@ parts:
       - build-essential
     build-snaps:
       - go/1.26-fips/stable
-    stage-packages:
-      - ca-certificates_data
     # Keep parity with the working 1.13.x build recipe.
     # NOTE: Unset LDFLAGS before make — coredns v1.14.6 changed LDFLAGS to a
     # ?= variable, and rockcraft sets LDFLAGS=-L<staged-lib-path> which would
