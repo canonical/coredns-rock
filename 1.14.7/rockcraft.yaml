@@ -1,0 +1,67 @@
+name: coredns
+summary: ROCK for the CoreDNS Project.
+description: This ROCK is a drop in replacement for the coredns/coredns image.
+version: "1.14.7"
+license: Apache-2.0
+
+base: bare
+build-base: ubuntu@24.04
+platforms:
+  amd64:
+  arm64:
+
+entrypoint-service: coredns
+services:
+  coredns:
+    override: replace
+    summary: "coredns service"
+    startup: enabled
+    command: "/coredns [ -conf /etc/coredns/Corefile ]"
+    on-failure: shutdown
+
+parts:
+  # `base: bare` stages no base-files, and since the Ubuntu 24.04 /usr-merge the
+  # libc6 deb no longer carries the top-level /lib and /lib64 compatibility
+  # symlinks itself. Without them the ELF interpreter
+  # (/lib64/ld-linux-x86-64.so.2 on amd64, /lib/ld-linux-aarch64.so.1 on arm64)
+  # does not resolve and every binary in the rock, pebble included, dies with
+  # "no such file or directory".
+  # Ubuntu 24.04 also moves pebble to /usr/bin/pebble (usr-merge), so /bin must
+  # be a symlink to usr/bin for /bin/pebble to resolve correctly.
+  usr-merge:
+    plugin: nil
+    override-prime: |
+      craftctl default
+      # No-ops on a build-base that already provides them, so this part stays
+      # correct if it is carried over to another base.
+      [ -e "${CRAFT_PRIME}/lib" ] || ln -s usr/lib "${CRAFT_PRIME}/lib"
+      [ -e "${CRAFT_PRIME}/bin" ] || ln -s usr/bin "${CRAFT_PRIME}/bin"
+      if [ "${CRAFT_ARCH_BUILD_FOR}" = "amd64" ]; then
+        [ -e "${CRAFT_PRIME}/lib64" ] || ln -s usr/lib64 "${CRAFT_PRIME}/lib64"
+      fi
+  openssl:
+    plugin: nil
+    stage-packages:
+      - openssl-fips-module-3 # a Pro only FIPS package for openssl
+      - openssl # now automatically selected from fips-preview
+  coredns:
+    after: [pebble]
+    plugin: nil
+    source: https://github.com/coredns/coredns
+    source-type: git
+    source-tag: v1.14.7
+    source-depth: 1
+    build-packages:
+      - build-essential
+    build-snaps:
+      - go/1.26-fips/stable
+    # Keep parity with the working 1.13.x build recipe.
+    # NOTE: Unset LDFLAGS before make — coredns v1.14.6 changed LDFLAGS to a
+    # ?= variable, and rockcraft sets LDFLAGS=-L<staged-lib-path> which would
+    # override the Makefile default and pass -L as an invalid direct go build
+    # flag. CGO_LDFLAGS (still set by rockcraft) handles lib path for CGO.
+    override-build: |
+      snap refresh go --channel=1.26-fips/stable
+      unset LDFLAGS
+      make CGO_ENABLED=1 GOTOOLCHAIN=local SYSTEM="GOEXPERIMENT=opensslcrypto" BUILDOPTS="-tags 'linux,cgo,ms_tls13kdf'"
+      cp $CRAFT_PART_BUILD/coredns $CRAFT_PART_INSTALL
