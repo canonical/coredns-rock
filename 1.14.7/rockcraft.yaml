@@ -41,7 +41,6 @@ parts:
     stage-packages:
       - openssl-fips-module-3 # a Pro only FIPS package for openssl
       - openssl # now automatically selected from fips-preview
-      - ca-certificates_data
   coredns:
     after: [pebble]
     plugin: nil
